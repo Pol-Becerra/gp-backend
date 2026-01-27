@@ -14,7 +14,9 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json* ./
-RUN npm ci
+
+# Install dependencies including sharp for image optimization
+RUN npm ci && npm install sharp
 
 # ============================================
 # Stage 2: Builder
@@ -26,7 +28,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Build arguments for Supabase (required for static generation if used)
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+
 # Set environment variables for build
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
 
@@ -55,6 +63,9 @@ RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
 # Copy standalone build and static files
+# COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+# COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# NOTE: Sometimes standalone output structure varies, ensuring robust copy
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
