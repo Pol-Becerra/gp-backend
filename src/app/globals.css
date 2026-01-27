@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 220 14% 6%;
+    --foreground: 0 0% 100%;
+    --card: 220 14% 10%;
+    --card-foreground: 0 0% 100%;
+    --popover: 220 14% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 108 100% 54%;
+    --primary-foreground: 220 14% 6%;
+    --secondary: 220 14% 15%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 14% 20%;
+    --muted-foreground: 220 9% 65%;
+    --accent: 108 100% 54%;
+    --accent-foreground: 220 14% 6%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 14% 20%;
+    --input: 220 14% 20%;
+    --ring: 108 100% 54%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-text-primary font-sans antialiased;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background-secondary;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-text-muted;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-md border border-border/50 rounded-lg;
+  }
+
+  .neon-glow {
+    @apply shadow-glow;
+  }
+
+  .btn-primary {
+    @apply bg-accent text-background font-semibold px-4 py-2 rounded-lg 
+           hover:bg-accent-hover transition-all duration-200 
+           hover:shadow-glow active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-card border border-border text-text-primary font-medium px-4 py-2 rounded-lg 
+           hover:bg-card-hover hover:border-accent/50 transition-all duration-200;
+  }
+
+  .input-field {
+    @apply bg-background-secondary border border-border text-text-primary 
+           px-4 py-2.5 rounded-lg placeholder:text-text-muted
+           focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/50
+           transition-all duration-200;
+  }
+
+  .stat-card {
+    @apply bg-card rounded-xl p-6 border border-border/50
+           hover:border-accent/30 transition-all duration-300;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary
+           hover:bg-card hover:text-text-primary transition-all duration-200;
+  }
+
+  .sidebar-link.active {
+    @apply bg-accent/10 text-accent border-l-2 border-accent;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply bg-success-muted text-success;
+  }
+
+  .badge-warning {
+    @apply bg-warning-muted text-warning;
+  }
+
+  .badge-error {
+    @apply bg-error-muted text-error;
+  }
+
+  .badge-info {
+    @apply bg-info-muted text-info;
+  }
+
+  .badge-accent {
+    @apply bg-accent-muted text-accent;
+  }
+
+  .table-row {
+    @apply border-b border-border/50 hover:bg-card-hover transition-colors;
+  }
+
+  .table-header {
+    @apply text-text-secondary text-sm font-medium uppercase tracking-wider;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-accent to-success bg-clip-text text-transparent;
+  }
+
+  .animate-in {
+    @apply animate-fade-in;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+  }
+}
