@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     output: 'standalone',
-    // Disable strict checks during build to prevent resource exhaustion on small VPS
+    reactStrictMode: true,
     typescript: {
         ignoreBuildErrors: true,
     },
