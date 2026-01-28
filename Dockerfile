@@ -3,7 +3,7 @@
 # ============================================
 # Multi-stage build optimizado para producción
 
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # ============================================
 # Stage 1: Dependencies

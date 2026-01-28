@@ -49,3 +49,114 @@ export async function getLocalidades(partidoId: string): Promise<Localidad[]> {
 
     return data || []
 }
+
+// AMB PROVINCIAS
+export async function createProvincia(nombre: string) {
+    const supabase = createClient()
+    const { data, error } = await supabase
+        .from('provincias')
+        .insert({ nombre })
+        .select()
+        .single()
+
+    if (error) throw new Error(error.message)
+    return data
+}
+
+export async function updateProvincia(id: string, nombre: string) {
+    const supabase = createClient()
+    const { data, error } = await supabase
+        .from('provincias')
+        .update({ nombre })
+        .eq('id', id)
+        .select()
+        .single()
+
+    if (error) throw new Error(error.message)
+    return data
+}
+
+export async function deleteProvincia(id: string) {
+    const supabase = createClient()
+    const { error } = await supabase
+        .from('provincias')
+        .delete()
+        .eq('id', id)
+
+    if (error) throw new Error(error.message)
+    return true
+}
+
+// AMB PARTIDOS
+export async function createPartido(nombre: string, provinciaId: string) {
+    const supabase = createClient()
+    const { data, error } = await supabase
+        .from('partidos')
+        .insert({ nombre, provincia_id: provinciaId })
+        .select()
+        .single()
+
+    if (error) throw new Error(error.message)
+    return data
+}
+
+export async function updatePartido(id: string, nombre: string) {
+    const supabase = createClient()
+    const { data, error } = await supabase
+        .from('partidos')
+        .update({ nombre })
+        .eq('id', id)
+        .select()
+        .single()
+
+    if (error) throw new Error(error.message)
+    return data
+}
+
+export async function deletePartido(id: string) {
+    const supabase = createClient()
+    const { error } = await supabase
+        .from('partidos')
+        .delete()
+        .eq('id', id)
+
+    if (error) throw new Error(error.message)
+    return true
+}
+
+// AMB LOCALIDADES
+export async function createLocalidad(nombre: string, partidoId: string, cp: string) {
+    const supabase = createClient()
+    const { data, error } = await supabase
+        .from('localidades')
+        .insert({ nombre, partido_id: partidoId, cp })
+        .select()
+        .single()
+
+    if (error) throw new Error(error.message)
+    return data
+}
+
+export async function updateLocalidad(id: string, nombre: string, cp: string) {
+    const supabase = createClient()
+    const { data, error } = await supabase
+        .from('localidades')
+        .update({ nombre, cp })
+        .eq('id', id)
+        .select()
+        .single()
+
+    if (error) throw new Error(error.message)
+    return data
+}
+
+export async function deleteLocalidad(id: string) {
+    const supabase = createClient()
+    const { error } = await supabase
+        .from('localidades')
+        .delete()
+        .eq('id', id)
+
+    if (error) throw new Error(error.message)
+    return true
+}
