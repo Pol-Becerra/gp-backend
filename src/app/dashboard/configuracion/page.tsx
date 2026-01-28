@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { MapPin, ChevronRight } from 'lucide-react'
 
 export default function ConfigurationPage() {
     return (
@@ -12,6 +14,26 @@ export default function ConfigurationPage() {
             </div>
 
             <div className="grid gap-6 max-w-2xl">
+                {/* Administración Geográfica */}
+                <Link href="/dashboard/configuracion/geo">
+                    <Card className="hover:border-accent/50 transition-colors cursor-pointer">
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 rounded-lg bg-accent/10">
+                                        <MapPin className="h-5 w-5 text-accent" />
+                                    </div>
+                                    <div>
+                                        <CardTitle>Administración Geográfica</CardTitle>
+                                        <CardDescription>Gestionar provincias, partidos, ciudades y códigos postales</CardDescription>
+                                    </div>
+                                </div>
+                                <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                            </div>
+                        </CardHeader>
+                    </Card>
+                </Link>
+
                 <Card>
                     <CardHeader>
                         <CardTitle>Notificaciones</CardTitle>
@@ -52,3 +74,4 @@ export default function ConfigurationPage() {
         </div>
     )
 }
+
