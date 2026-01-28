@@ -15,8 +15,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json package-lock.json* ./
 
-# Install dependencies including sharp for image optimization
-RUN npm ci && npm install sharp
+# Install dependencies
+RUN npm ci
 
 # ============================================
 # Stage 2: Builder
