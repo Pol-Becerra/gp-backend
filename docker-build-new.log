@@ -1,0 +1,233 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  15.81MB
+Step 1/45 : FROM node:20-alpine AS base
+ ---> 458b0b7c1c60
+Step 2/45 : RUN apk add --no-cache libc6-compat
+ ---> Using cache
+ ---> 959daf741711
+Step 3/45 : FROM base AS dependencies
+ ---> 959daf741711
+Step 4/45 : WORKDIR /app
+ ---> Using cache
+ ---> e0c55c842a5d
+Step 5/45 : COPY package.json package-lock.json ./
+ ---> Using cache
+ ---> 1c18c100490d
+Step 6/45 : RUN npm ci     --prefer-offline     --no-audit     --legacy-peer-deps     --no-fund     --ignore-scripts
+ ---> Using cache
+ ---> c05fd39b2b7c
+Step 7/45 : FROM base AS builder
+ ---> 959daf741711
+Step 8/45 : WORKDIR /app
+ ---> Using cache
+ ---> e0c55c842a5d
+Step 9/45 : COPY --from=dependencies /app/node_modules ./node_modules
+ ---> Using cache
+ ---> f12a3227a116
+Step 10/45 : COPY . .
+ ---> d3126c153039
+Step 11/45 : ARG NEXT_PUBLIC_SUPABASE_URL
+ ---> Running in 71a812ee8438
+ ---> Removed intermediate container 71a812ee8438
+ ---> c146b53d9993
+Step 12/45 : ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ ---> Running in 322ceb3daca4
+ ---> Removed intermediate container 322ceb3daca4
+ ---> 4ff15a27e39f
+Step 13/45 : ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+ ---> Running in 300f38cd9aac
+ ---> Removed intermediate container 300f38cd9aac
+ ---> cdddddf7c2f7
+Step 14/45 : ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+ ---> Running in dc2ea2fda8d3
+ ---> Removed intermediate container dc2ea2fda8d3
+ ---> e9edffd1399f
+Step 15/45 : ENV NEXT_TELEMETRY_DISABLED=1
+ ---> Running in 95a6c083fe28
+ ---> Removed intermediate container 95a6c083fe28
+ ---> a76c27da8dff
+Step 16/45 : ENV NODE_ENV=production
+ ---> Running in 6b09f18c41a4
+ ---> Removed intermediate container 6b09f18c41a4
+ ---> c6cbbd4c15da
+Step 17/45 : ENV npm_config_fetch_timeout=120000
+ ---> Running in 05612c80039e
+ ---> Removed intermediate container 05612c80039e
+ ---> f6fd04d2d7c4
+Step 18/45 : ENV npm_config_fetch_retry_mintimeout=20000
+ ---> Running in eed72f927c22
+ ---> Removed intermediate container eed72f927c22
+ ---> 339c38b4baba
+Step 19/45 : ENV npm_config_fetch_retry_maxtimeout=120000
+ ---> Running in 5bbeaad5d7b1
+ ---> Removed intermediate container 5bbeaad5d7b1
+ ---> f9725b85e2e7
+Step 20/45 : ENV NEXT_SKIP_ENV_VALIDATION=true
+ ---> Running in a12e7d765abe
+ ---> Removed intermediate container a12e7d765abe
+ ---> ffa3ae17d177
+Step 21/45 : ENV SKIP_ENV_VALIDATION=true
+ ---> Running in 2a9bb6732604
+ ---> Removed intermediate container 2a9bb6732604
+ ---> b15d61184ecc
+Step 22/45 : RUN mkdir -p /app/public
+ ---> Running in 369ae76d84f9
+ ---> Removed intermediate container 369ae76d84f9
+ ---> 278184e5b346
+Step 23/45 : RUN npm run build
+ ---> Running in 57bdcebef0c2
+
+> guia-pymes@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+
+[91m⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[0m  Creating an optimized production build ...
+✓ Compiled successfully in 17.9s
+  Skipping validation of types
+
+  We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+  The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+  	- target was set to ES2017 (For top-level `await`. Note: Next.js only polyfills for the esmodules target.)
+  	- include was updated to add '.next/dev/types/**/*.ts'
+
+  The following mandatory changes were made to your tsconfig.json:
+
+  	- jsx was set to react-jsx (next.js uses the React automatic runtime)
+
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/2) ...
+✓ Generating static pages using 7 workers (2/2) in 198.4ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /dashboard
+├ ƒ /dashboard/auditoria
+├ ƒ /dashboard/categorias
+├ ƒ /dashboard/configuracion
+├ ƒ /dashboard/configuracion/geo
+├ ƒ /dashboard/contactos
+├ ƒ /dashboard/contactos/nuevo
+├ ƒ /dashboard/entidades
+├ ƒ /dashboard/entidades/[id]
+├ ƒ /dashboard/entidades/[id]/contactos/[contactoId]/editar
+├ ƒ /dashboard/entidades/[id]/contactos/nuevo
+├ ƒ /dashboard/entidades/[id]/direcciones/[direccionId]/editar
+├ ƒ /dashboard/entidades/[id]/direcciones/nueva
+├ ƒ /dashboard/entidades/[id]/editar
+├ ƒ /dashboard/entidades/nueva
+├ ƒ /dashboard/google-maps
+├ ƒ /dashboard/google-maps/[id]
+├ ƒ /dashboard/google-maps/nuevo
+├ ƒ /dashboard/tareas
+├ ƒ /dashboard/tareas/[id]
+├ ƒ /dashboard/tareas/areas
+├ ƒ /dashboard/tareas/nueva
+├ ƒ /forgot-password
+├ ƒ /login
+└ ƒ /register
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+[91mnpm notice
+npm notice New major version of npm available! 10.8.2 -> 11.8.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.8.0
+npm notice To update run: npm install -g npm@11.8.0
+npm notice
+[0m ---> Removed intermediate container 57bdcebef0c2
+ ---> f6c54b41a59e
+Step 24/45 : FROM base AS runtime
+ ---> 959daf741711
+Step 25/45 : WORKDIR /app
+ ---> Using cache
+ ---> e0c55c842a5d
+Step 26/45 : ENV NODE_ENV=production
+ ---> Using cache
+ ---> c58bfba41174
+Step 27/45 : ENV NEXT_TELEMETRY_DISABLED=1
+ ---> Using cache
+ ---> 6c71553f0414
+Step 28/45 : ENV PORT=3000
+ ---> Using cache
+ ---> 47381ee60c7f
+Step 29/45 : ENV HOSTNAME=0.0.0.0
+ ---> Using cache
+ ---> 880c44fca11b
+Step 30/45 : ARG NEXT_PUBLIC_SUPABASE_URL
+ ---> Running in b9af89e4498f
+ ---> Removed intermediate container b9af89e4498f
+ ---> 0dcd55c1dd4f
+Step 31/45 : ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ ---> Running in 908a163250b1
+ ---> Removed intermediate container 908a163250b1
+ ---> 30ccbba48609
+Step 32/45 : ARG SUPABASE_SERVICE_ROLE_KEY
+ ---> Running in 135019fb32c5
+ ---> Removed intermediate container 135019fb32c5
+ ---> d531d726edc0
+Step 33/45 : ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+ ---> Running in d2e03e19bcfa
+ ---> Removed intermediate container d2e03e19bcfa
+ ---> a531e7e5e686
+Step 34/45 : ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+ ---> Running in 14f835dc1fc2
+ ---> Removed intermediate container 14f835dc1fc2
+ ---> 07716a78cd5d
+Step 35/45 : ENV SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+ ---> Running in a3c2db79178b
+ ---> Removed intermediate container a3c2db79178b
+ ---> a5cb45c099d8
+Step 36/45 : RUN addgroup --system --gid 1001 nodejs &&     adduser --system --uid 1001 nextjs
+ ---> Running in 81fecc45f4f8
+ ---> Removed intermediate container 81fecc45f4f8
+ ---> 192daa2187fa
+Step 37/45 : COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+ ---> d81ed984889f
+Step 38/45 : COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+ ---> bffc5a2dff89
+Step 39/45 : COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+ ---> ffa92882e72f
+Step 40/45 : COPY --chown=nextjs:nodejs package.json package-lock.json ./
+ ---> b78003f409df
+Step 41/45 : RUN npm ci --only=production     --prefer-offline     --no-audit     --legacy-peer-deps     --no-fund     --ignore-scripts
+ ---> Running in 1d90d1a05e2f
+[91mnpm warn config only Use `--omit=dev` to omit dev dependencies from the install.
+[0m[91mnpm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+[0m
+added 234 packages in 1m
+[91mnpm notice
+npm notice New major version of npm available! 10.8.2 -> 11.8.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.8.0
+npm notice To update run: npm install -g npm@11.8.0
+npm notice
+[0m ---> Removed intermediate container 1d90d1a05e2f
+ ---> 1004ee64636c
+Step 42/45 : USER nextjs
+ ---> Running in fd07b708da4b
+ ---> Removed intermediate container fd07b708da4b
+ ---> c7b82ea8d2c7
+Step 43/45 : EXPOSE 3000
+ ---> Running in e42f0d4e270f
+ ---> Removed intermediate container e42f0d4e270f
+ ---> 664ca86d2c4e
+Step 44/45 : HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3     CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+ ---> Running in 249a0d93de85
+ ---> Removed intermediate container 249a0d93de85
+ ---> 58d609be8223
+Step 45/45 : CMD ["node", "server.js"]
+ ---> Running in 6504257e2af1
+ ---> Removed intermediate container 6504257e2af1
+ ---> f6a398ebcc89
+Successfully built f6a398ebcc89
+Successfully tagged gp-test-new:latest

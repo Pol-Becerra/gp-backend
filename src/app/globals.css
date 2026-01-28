@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
 
 @layer base {
   :root {
@@ -65,31 +64,23 @@
   }
 
   .btn-primary {
-    @apply bg-accent text-background font-semibold px-4 py-2 rounded-lg 
-           hover:bg-accent-hover transition-all duration-200 
-           hover:shadow-glow active:scale-95;
+    @apply bg-accent text-background font-semibold px-4 py-2 rounded-lg hover:bg-accent-hover transition-all duration-200 hover:shadow-glow active:scale-95;
   }
 
   .btn-secondary {
-    @apply bg-card border border-border text-text-primary font-medium px-4 py-2 rounded-lg 
-           hover:bg-card-hover hover:border-accent/50 transition-all duration-200;
+    @apply bg-card border border-border text-text-primary font-medium px-4 py-2 rounded-lg hover:bg-card-hover hover:border-accent/50 transition-all duration-200;
   }
 
   .input-field {
-    @apply bg-background-secondary border border-border text-text-primary 
-           px-4 py-2.5 rounded-lg placeholder:text-text-muted
-           focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/50
-           transition-all duration-200;
+    @apply bg-background-secondary border border-border text-text-primary px-4 py-2.5 rounded-lg placeholder:text-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/50 transition-all duration-200;
   }
 
   .stat-card {
-    @apply bg-card rounded-xl p-6 border border-border/50
-           hover:border-accent/30 transition-all duration-300;
+    @apply bg-card rounded-xl p-6 border border-border/50 hover:border-accent/30 transition-all duration-300;
   }
 
   .sidebar-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary
-           hover:bg-card hover:text-text-primary transition-all duration-200;
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-card hover:text-text-primary transition-all duration-200;
   }
 
   .sidebar-link.active {
