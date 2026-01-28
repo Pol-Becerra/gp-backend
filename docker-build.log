@@ -1,0 +1,272 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  15.79MB
+Step 1/39 : FROM node:20-alpine AS base
+20-alpine: Pulling from library/node
+589002ba0eae: Pulling fs layer
+ad6d96c196e3: Pulling fs layer
+eb87f4721c91: Pulling fs layer
+e31b20165522: Pulling fs layer
+e31b20165522: Waiting
+eb87f4721c91: Verifying Checksum
+eb87f4721c91: Download complete
+e31b20165522: Verifying Checksum
+e31b20165522: Download complete
+589002ba0eae: Verifying Checksum
+589002ba0eae: Download complete
+589002ba0eae: Pull complete
+ad6d96c196e3: Verifying Checksum
+ad6d96c196e3: Download complete
+ad6d96c196e3: Pull complete
+eb87f4721c91: Pull complete
+e31b20165522: Pull complete
+Digest: sha256:09e2b3d9726018aecf269bd35325f46bf75046a643a66d28360ec71132750ec8
+Status: Downloaded newer image for node:20-alpine
+ ---> 458b0b7c1c60
+Step 2/39 : RUN apk add --no-cache libc6-compat
+ ---> Running in 51f3d7f01869
+(1/3) Installing musl-obstack (1.2.3-r2)
+(2/3) Installing libucontext (1.3.3-r0)
+(3/3) Installing gcompat (1.1.0-r4)
+OK: 11.0 MiB in 21 packages
+ ---> Removed intermediate container 51f3d7f01869
+ ---> 959daf741711
+Step 3/39 : FROM base AS dependencies
+ ---> 959daf741711
+Step 4/39 : WORKDIR /app
+ ---> Running in d125c7f3405b
+ ---> Removed intermediate container d125c7f3405b
+ ---> e0c55c842a5d
+Step 5/39 : COPY package.json package-lock.json ./
+ ---> e601d4342933
+Step 6/39 : RUN npm ci     --prefer-offline     --no-audit     --legacy-peer-deps     --no-fund     --ignore-scripts
+ ---> Running in 3604c8db5d57
+[91mnpm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+[0m[91mnpm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+[0m[91mnpm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+[0m[91mnpm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+[0m[91mnpm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+[0m[91mnpm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[0m
+added 564 packages in 1m
+[91mnpm notice
+npm notice New major version of npm available! 10.8.2 -> 11.8.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.8.0
+npm notice To update run: npm install -g npm@11.8.0
+npm notice
+[0m ---> Removed intermediate container 3604c8db5d57
+ ---> da442e881fd4
+Step 7/39 : FROM base AS builder
+ ---> 959daf741711
+Step 8/39 : WORKDIR /app
+ ---> Using cache
+ ---> e0c55c842a5d
+Step 9/39 : COPY --from=dependencies /app/node_modules ./node_modules
+ ---> 9eb773b67e26
+Step 10/39 : COPY . .
+ ---> 4d2fb0415b5a
+Step 11/39 : ARG NEXT_PUBLIC_SUPABASE_URL
+ ---> Running in 7dbee44a63b7
+ ---> Removed intermediate container 7dbee44a63b7
+ ---> bcf18c2b5a1a
+Step 12/39 : ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ ---> Running in 9ae4c951fb55
+ ---> Removed intermediate container 9ae4c951fb55
+ ---> 2d3990a7a44b
+Step 13/39 : ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+ ---> Running in 8f5f2da71d4b
+ ---> Removed intermediate container 8f5f2da71d4b
+ ---> 44318dc1f772
+Step 14/39 : ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+ ---> Running in ddfa8adb0d1e
+ ---> Removed intermediate container ddfa8adb0d1e
+ ---> 1e5877cafa3c
+Step 15/39 : ENV NEXT_TELEMETRY_DISABLED=1
+ ---> Running in e6f95a2fc574
+ ---> Removed intermediate container e6f95a2fc574
+ ---> 4a357bd1e859
+Step 16/39 : ENV NODE_ENV=production
+ ---> Running in f1a4ac5ccbf9
+ ---> Removed intermediate container f1a4ac5ccbf9
+ ---> 9271fdbad79c
+Step 17/39 : ENV npm_config_fetch_timeout=120000
+ ---> Running in b033b8b3c430
+ ---> Removed intermediate container b033b8b3c430
+ ---> cfe2c0577a28
+Step 18/39 : ENV npm_config_fetch_retry_mintimeout=20000
+ ---> Running in a3296395a8f6
+ ---> Removed intermediate container a3296395a8f6
+ ---> 4305313018cb
+Step 19/39 : ENV npm_config_fetch_retry_maxtimeout=120000
+ ---> Running in b4b3d19045bd
+ ---> Removed intermediate container b4b3d19045bd
+ ---> 5a68728d1895
+Step 20/39 : ENV NEXT_SKIP_ENV_VALIDATION=true
+ ---> Running in c3ed32a90277
+ ---> Removed intermediate container c3ed32a90277
+ ---> 8d1c75034050
+Step 21/39 : ENV SKIP_ENV_VALIDATION=true
+ ---> Running in 9d3f0d9e3381
+ ---> Removed intermediate container 9d3f0d9e3381
+ ---> 23580d4a6a7d
+Step 22/39 : RUN mkdir -p /app/public
+ ---> Running in 8ee855b0ff98
+ ---> Removed intermediate container 8ee855b0ff98
+ ---> 5b8b0875bbd5
+Step 23/39 : RUN npm run build
+ ---> Running in 2392fa5b4944
+
+> guia-pymes@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+
+   Creating an optimized production build ...
+[91m<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (122kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+[0m[91m ⚠ Compiled with warnings
+
+[0m[91m./node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
+A Node.js API is used (process.versions at line: 32) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+./node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
+./node_modules/@supabase/realtime-js/dist/module/index.js
+./node_modules/@supabase/supabase-js/dist/module/index.js
+./node_modules/@supabase/ssr/dist/module/createBrowserClient.js
+./node_modules/@supabase/ssr/dist/module/index.js
+./src/lib/supabase/middleware.ts
+
+./node_modules/@supabase/supabase-js/dist/module/index.js
+A Node.js API is used (process.version at line: 24) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+./node_modules/@supabase/supabase-js/dist/module/index.js
+./node_modules/@supabase/ssr/dist/module/createBrowserClient.js
+./node_modules/@supabase/ssr/dist/module/index.js
+./src/lib/supabase/middleware.ts
+
+[0m ✓ Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+   Generating static pages (0/21) ...
+   Generating static pages (5/21) 
+   Generating static pages (10/21) 
+   Generating static pages (15/21) 
+ ✓ Generating static pages (21/21)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                                     Size     First Load JS
+┌ ƒ /                                                           152 B          87.7 kB
+├ ○ /_not-found                                                 880 B          88.4 kB
+├ ƒ /dashboard                                                  113 kB          208 kB
+├ ƒ /dashboard/auditoria                                        152 B          87.7 kB
+├ ƒ /dashboard/categorias                                       6.1 kB          136 kB
+├ ƒ /dashboard/configuracion                                    1.17 kB         105 kB
+├ ƒ /dashboard/configuracion/geo                                5.38 kB         118 kB
+├ ƒ /dashboard/contactos                                        1.1 kB          127 kB
+├ ƒ /dashboard/contactos/nuevo                                  157 B           141 kB
+├ ƒ /dashboard/entidades                                        2.9 kB          138 kB
+├ ƒ /dashboard/entidades/[id]                                   1.45 kB         127 kB
+├ ƒ /dashboard/entidades/[id]/contactos/[contactoId]/editar     157 B           141 kB
+├ ƒ /dashboard/entidades/[id]/contactos/nuevo                   156 B           141 kB
+├ ƒ /dashboard/entidades/[id]/direcciones/[direccionId]/editar  156 B           140 kB
+├ ƒ /dashboard/entidades/[id]/direcciones/nueva                 157 B           140 kB
+├ ƒ /dashboard/entidades/[id]/editar                            156 B           142 kB
+├ ƒ /dashboard/entidades/nueva                                  156 B           142 kB
+├ ƒ /dashboard/google-maps                                      180 B          96.5 kB
+├ ƒ /dashboard/google-maps/[id]                                 146 B           110 kB
+├ ƒ /dashboard/google-maps/nuevo                                147 B           110 kB
+├ ƒ /dashboard/tareas                                           2.71 kB         138 kB
+├ ƒ /dashboard/tareas/[id]                                      159 B           145 kB
+├ ƒ /dashboard/tareas/areas                                     3.82 kB         108 kB
+├ ƒ /dashboard/tareas/nueva                                     159 B           145 kB
+├ ƒ /forgot-password                                            3.92 kB         108 kB
+├ ƒ /login                                                      3.12 kB         161 kB
+└ ƒ /register                                                   3.52 kB         162 kB
++ First Load JS shared by all                                   87.6 kB
+  ├ chunks/2117-fae3b81281850f8d.js                             31.9 kB
+  ├ chunks/fd9d1056-89b9eeea00bfc58f.js                         53.6 kB
+  └ other shared chunks (total)                                 2.01 kB
+
+
+ƒ Middleware                                                    68.8 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+[91mnpm notice
+npm notice New major version of npm available! 10.8.2 -> 11.8.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.8.0
+npm notice To update run: npm install -g npm@11.8.0
+npm notice
+[0m ---> Removed intermediate container 2392fa5b4944
+ ---> df686616d930
+Step 24/39 : FROM base AS runtime
+ ---> 959daf741711
+Step 25/39 : WORKDIR /app
+ ---> Using cache
+ ---> e0c55c842a5d
+Step 26/39 : ENV NODE_ENV=production
+ ---> Running in 371e7d1e842a
+ ---> Removed intermediate container 371e7d1e842a
+ ---> c58bfba41174
+Step 27/39 : ENV NEXT_TELEMETRY_DISABLED=1
+ ---> Running in b55efae210f4
+ ---> Removed intermediate container b55efae210f4
+ ---> 6c71553f0414
+Step 28/39 : ENV PORT=3000
+ ---> Running in 3306c848fbc0
+ ---> Removed intermediate container 3306c848fbc0
+ ---> 47381ee60c7f
+Step 29/39 : ENV HOSTNAME=0.0.0.0
+ ---> Running in c87c4293eb5f
+ ---> Removed intermediate container c87c4293eb5f
+ ---> 880c44fca11b
+Step 30/39 : RUN addgroup --system --gid 1001 nodejs &&     adduser --system --uid 1001 nextjs
+ ---> Running in 6472ec0bf745
+ ---> Removed intermediate container 6472ec0bf745
+ ---> 6cf39180ab1f
+Step 31/39 : COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+ ---> 2c824e24c853
+Step 32/39 : COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+ ---> 4548f48a3b3b
+Step 33/39 : COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+ ---> fa6b6bbb8e98
+Step 34/39 : COPY --chown=nextjs:nodejs package.json package-lock.json ./
+ ---> c135a19164e0
+Step 35/39 : RUN npm ci --only=production     --prefer-offline     --no-audit     --legacy-peer-deps     --no-fund     --ignore-scripts
+ ---> Running in 2d04fbfb78ba
+[91mnpm warn config only Use `--omit=dev` to omit dev dependencies from the install.
+[0m
+added 280 packages in 1m
+[91mnpm notice
+npm notice New major version of npm available! 10.8.2 -> 11.8.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.8.0
+npm notice To update run: npm install -g npm@11.8.0
+npm notice
+[0m ---> Removed intermediate container 2d04fbfb78ba
+ ---> 226e69b02036
+Step 36/39 : USER nextjs
+ ---> Running in 0cb89d8df639
+ ---> Removed intermediate container 0cb89d8df639
+ ---> 18b9a907bd61
+Step 37/39 : EXPOSE 3000
+ ---> Running in 1723b2d7df2a
+ ---> Removed intermediate container 1723b2d7df2a
+ ---> e84e6e0ffdde
+Step 38/39 : HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3     CMD node -e "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+ ---> Running in 2764c4c102af
+ ---> Removed intermediate container 2764c4c102af
+ ---> d2a7d5fab9e2
+Step 39/39 : CMD ["node", "server.js"]
+ ---> Running in a1dfc6e9382a
+ ---> Removed intermediate container a1dfc6e9382a
+ ---> 8ab435d8cf84
+Successfully built 8ab435d8cf84
+Successfully tagged gp-test:latest

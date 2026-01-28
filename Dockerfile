@@ -48,9 +48,11 @@ ENV npm_config_fetch_retry_maxtimeout=120000
 ENV NEXT_SKIP_ENV_VALIDATION=true
 ENV SKIP_ENV_VALIDATION=true
 
+# Asegurar que el directorio public existe
+RUN mkdir -p /app/public
+
 # Build sin descargas innecesarias
-# Usa timeout para evitar cuelgues indefinidos
-RUN timeout 900 npm run build || exit 0
+RUN npm run build
 
 # ============================================
 # Stage 3: Production Runtime

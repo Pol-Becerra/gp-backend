@@ -52,7 +52,7 @@ const config: Config = {
                 },
             },
             fontFamily: {
-                sans: ['Inter', 'system-ui', 'sans-serif'],
+                sans: ['Arial', 'Verdana', 'system-ui', 'sans-serif'],
             },
             borderRadius: {
                 lg: '0.75rem',

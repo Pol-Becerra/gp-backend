@@ -1,0 +1,91 @@
+
+> guia-pymes@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env
+
+   Creating an optimized production build ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (122kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ⚠ Compiled with warnings
+
+./node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
+A Node.js API is used (process.versions at line: 32) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+./node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
+./node_modules/@supabase/realtime-js/dist/module/index.js
+./node_modules/@supabase/supabase-js/dist/module/index.js
+./node_modules/@supabase/ssr/dist/module/createBrowserClient.js
+./node_modules/@supabase/ssr/dist/module/index.js
+./src/lib/supabase/middleware.ts
+
+./node_modules/@supabase/supabase-js/dist/module/index.js
+A Node.js API is used (process.version at line: 24) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+./node_modules/@supabase/supabase-js/dist/module/index.js
+./node_modules/@supabase/ssr/dist/module/createBrowserClient.js
+./node_modules/@supabase/ssr/dist/module/index.js
+./src/lib/supabase/middleware.ts
+
+ ✓ Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+⚠️  Node.js 18 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 20 or later. For more information, visit: https://github.com/orgs/supabase/discussions/37217
+⚠️  Node.js 18 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 20 or later. For more information, visit: https://github.com/orgs/supabase/discussions/37217
+⚠️  Node.js 18 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 20 or later. For more information, visit: https://github.com/orgs/supabase/discussions/37217
+⚠️  Node.js 18 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 20 or later. For more information, visit: https://github.com/orgs/supabase/discussions/37217
+⚠️  Node.js 18 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 20 or later. For more information, visit: https://github.com/orgs/supabase/discussions/37217
+⚠️  Node.js 18 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 20 or later. For more information, visit: https://github.com/orgs/supabase/discussions/37217
+⚠️  Node.js 18 and below are deprecated and will no longer be supported in future versions of @supabase/supabase-js. Please upgrade to Node.js 20 or later. For more information, visit: https://github.com/orgs/supabase/discussions/37217
+   Generating static pages (0/21) ...
+   Generating static pages (5/21) 
+   Generating static pages (10/21) 
+   Generating static pages (15/21) 
+ ✓ Generating static pages (21/21)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                                     Size     First Load JS
+┌ ƒ /                                                           152 B          87.7 kB
+├ ○ /_not-found                                                 880 B          88.4 kB
+├ ƒ /dashboard                                                  113 kB          208 kB
+├ ƒ /dashboard/auditoria                                        152 B          87.7 kB
+├ ƒ /dashboard/categorias                                       6.1 kB          136 kB
+├ ƒ /dashboard/configuracion                                    1.17 kB         105 kB
+├ ƒ /dashboard/configuracion/geo                                5.37 kB         118 kB
+├ ƒ /dashboard/contactos                                        1.1 kB          127 kB
+├ ƒ /dashboard/contactos/nuevo                                  156 B           141 kB
+├ ƒ /dashboard/entidades                                        2.9 kB          138 kB
+├ ƒ /dashboard/entidades/[id]                                   1.45 kB         127 kB
+├ ƒ /dashboard/entidades/[id]/contactos/[contactoId]/editar     157 B           141 kB
+├ ƒ /dashboard/entidades/[id]/contactos/nuevo                   156 B           141 kB
+├ ƒ /dashboard/entidades/[id]/direcciones/[direccionId]/editar  156 B           140 kB
+├ ƒ /dashboard/entidades/[id]/direcciones/nueva                 157 B           140 kB
+├ ƒ /dashboard/entidades/[id]/editar                            157 B           142 kB
+├ ƒ /dashboard/entidades/nueva                                  157 B           142 kB
+├ ƒ /dashboard/google-maps                                      180 B          96.5 kB
+├ ƒ /dashboard/google-maps/[id]                                 147 B           110 kB
+├ ƒ /dashboard/google-maps/nuevo                                148 B           110 kB
+├ ƒ /dashboard/tareas                                           2.71 kB         138 kB
+├ ƒ /dashboard/tareas/[id]                                      160 B           145 kB
+├ ƒ /dashboard/tareas/areas                                     3.82 kB         108 kB
+├ ƒ /dashboard/tareas/nueva                                     159 B           145 kB
+├ ƒ /forgot-password                                            3.92 kB         108 kB
+├ ƒ /login                                                      3.35 kB         162 kB
+└ ƒ /register                                                   3.75 kB         162 kB
++ First Load JS shared by all                                   87.6 kB
+  ├ chunks/2117-fae3b81281850f8d.js                             31.9 kB
+  ├ chunks/fd9d1056-89b9eeea00bfc58f.js                         53.6 kB
+  └ other shared chunks (total)                                 2.01 kB
+
+
+ƒ Middleware                                                    72.9 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
