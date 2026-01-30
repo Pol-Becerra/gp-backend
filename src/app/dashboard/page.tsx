@@ -1,15 +1,20 @@
 import { createClient } from '@/lib/supabase/server'
 import { StatsCards } from '@/components/dashboard/stats-cards'
 import { MainChart } from '@/components/dashboard/main-chart'
-import { RecentActivity } from '@/components/dashboard/recent-activity'
+import { Building2, Users, FolderTree, ArrowRight, Plus } from 'lucide-react'
+import Link from 'next/link'
 
-async function getDashboardData() {
-    const supabase = createClient()
+async function getDashboardSummary() {
+    const supabase = await createClient()
 
-    // Get entities count by type
+    // Get basic stats
     const { data: entidades } = await supabase
         .from('entidades')
-        .select('tipo, created_at')
+        .select('tipo, created_at, activo')
+
+    const { count: contactosCount } = await supabase
+        .from('contactos')
+        .select('*', { count: 'exact', head: true })
 
     const stats = {
         total_entidades: entidades?.length || 0,
@@ -17,85 +22,83 @@ async function getDashboardData() {
         total_negocios: entidades?.filter(e => e.tipo === 'NEGOCIO').length || 0,
         total_profesionales: entidades?.filter(e => e.tipo === 'PROFESIONAL').length || 0,
         total_servicios: entidades?.filter(e => e.tipo === 'SERVICIO').length || 0,
-        total_contactos: 0,
+        entidades_activas: entidades?.filter(e => e.activo).length || 0,
+        total_contactos: contactosCount || 0,
         nuevas_ultimo_mes: 0,
     }
 
-    // Get contacts count
-    const { count: contactosCount } = await supabase
-        .from('contactos')
-        .select('*', { count: 'exact', head: true })
-    stats.total_contactos = contactosCount || 0
-
-    // New entities in last 30 days
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
     stats.nuevas_ultimo_mes = entidades?.filter(
         e => new Date(e.created_at) > thirtyDaysAgo
     ).length || 0
 
-    // Entities by category
-    const { data: entidadesPorCategoria } = await supabase
-        .from('entidades')
-        .select('categoria_id, categorias(nombre, color)')
-
-    const categoryCounts: Record<string, { nombre: string; color: string; count: number }> = {}
-    entidadesPorCategoria?.forEach((e: any) => {
-        if (e.categorias) {
-            const key = e.categorias.nombre
-            if (!categoryCounts[key]) {
-                categoryCounts[key] = {
-                    nombre: e.categorias.nombre,
-                    color: e.categorias.color || '#39FF14',
-                    count: 0,
-                }
-            }
-            categoryCounts[key].count++
-        }
-    })
-
-    const entidadesPorCategoriaChart = Object.values(categoryCounts).map(c => ({
-        categoria_nombre: c.nombre,
-        categoria_color: c.color,
-        count: c.count,
-    }))
-
-    // Entities by month (simulated for demo, would need real monthly aggregation)
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun']
-    const entidadesPorMes = months.map((mes, i) => ({
-        mes,
-        pymes: Math.floor(stats.total_pymes / 6) + (i % 2),
-        negocios: Math.floor(stats.total_negocios / 6) + (i % 3),
-        profesionales: Math.floor(stats.total_profesionales / 6) + (i % 2),
-        servicios: Math.floor(stats.total_servicios / 6) + (i % 2),
-    }))
-
-    // Entities by type for pie chart
+    // Aggregations for Charts
     const entidadesPorTipo = [
         { name: 'PyMES', value: stats.total_pymes, color: '#3B82F6' },
         { name: 'Negocios', value: stats.total_negocios, color: '#22C55E' },
-        { name: 'Profesionales', value: stats.total_profesionales, color: '#39FF14' },
-        { name: 'Servicios', value: stats.total_servicios, color: '#A855F7' },
+        { name: 'Profesionales', value: stats.total_profesionales, color: '#A855F7' },
+        { name: 'Servicios', value: stats.total_servicios, color: '#F97316' },
     ]
 
-    // Recent activity logs
-    const { data: logs } = await supabase
-        .from('auditoria_logs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10)
+    // Aggregations by Month (Last 6 months)
+    const months = Array.from({ length: 6 }, (_, i) => {
+        const d = new Date()
+        d.setMonth(d.getMonth() - i)
+        return {
+            date: d,
+            label: d.toLocaleString('es-ES', { month: 'short' })
+        }
+    }).reverse()
 
-    return {
-        stats,
-        entidadesPorCategoria: entidadesPorCategoriaChart,
-        entidadesPorMes,
-        entidadesPorTipo,
-        logs: logs || [],
-    }
+    const entidadesPorMes = months.map(m => {
+        const monthEntidades = entidades?.filter(e => {
+            const date = new Date(e.created_at)
+            return date.getMonth() === m.date.getMonth() && date.getFullYear() === m.date.getFullYear()
+        })
+        return {
+            mes: m.label,
+            pymes: monthEntidades?.filter(e => e.tipo === 'PYME').length || 0,
+            negocios: monthEntidades?.filter(e => e.tipo === 'NEGOCIO').length || 0,
+            profesionales: monthEntidades?.filter(e => e.tipo === 'PROFESIONAL').length || 0,
+        }
+    })
+
+    // Aggregations by Category
+    const { data: categorias } = await supabase
+        .from('entidades')
+        .select(`
+            categorias
+        `)
+
+    // Flatten and count categories
+    const categoryCounts: Record<string, { count: number, color: string }> = {}
+
+    categorias?.forEach(row => {
+        if (Array.isArray(row.categorias)) {
+            row.categorias.forEach((cat: any) => {
+                if (!categoryCounts[cat.nombre]) {
+                    categoryCounts[cat.nombre] = { count: 0, color: cat.color || '#3B82F6' }
+                }
+                categoryCounts[cat.nombre].count++
+            })
+        }
+    })
+
+    const entidadesPorCategoria = Object.entries(categoryCounts)
+        .map(([nombre, data]) => ({
+            categoria_nombre: nombre,
+            categoria_color: data.color,
+            count: data.count
+        }))
+        .sort((a, b) => b.count - a.count)
+
+
+    return { stats, entidadesPorTipo, entidadesPorMes, entidadesPorCategoria }
 }
 
 export default async function DashboardPage() {
-    const data = await getDashboardData()
+    const data = await getDashboardSummary()
 
     return (
         <div className="space-y-8">
@@ -103,45 +106,68 @@ export default async function DashboardPage() {
             <div>
                 <h1 className="text-3xl font-bold text-text-primary">Dashboard</h1>
                 <p className="text-text-secondary mt-1">
-                    Resumen de tu gestión de entidades y contactos
+                    Bienvenido al panel de gestión de Guía PyMES
                 </p>
             </div>
 
             {/* Stats Cards */}
             <StatsCards stats={data.stats} />
 
-            {/* Charts */}
+            {/* Main Charts Area */}
             <MainChart
                 entidadesPorCategoria={data.entidadesPorCategoria}
                 entidadesPorMes={data.entidadesPorMes}
                 entidadesPorTipo={data.entidadesPorTipo}
             />
 
-            {/* Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                    <RecentActivity logs={data.logs} />
-                </div>
-                <div className="space-y-6">
-                    {/* Quick Actions */}
-                    <div className="glass-card p-6">
-                        <h3 className="font-semibold text-text-primary mb-4">Acciones Rápidas</h3>
-                        <div className="space-y-2">
-                            <a
-                                href="/dashboard/entidades/nueva"
-                                className="btn-primary w-full text-center block"
-                            >
-                                + Nueva Entidad
-                            </a>
-                            <a
-                                href="/dashboard/categorias"
-                                className="btn-secondary w-full text-center block"
-                            >
-                                Gestionar Categorías
-                            </a>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Access Cards */}
+                <Link href="/dashboard/entidades" className="glass-card p-6 group hover:border-accent/40 transition-all">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 rounded-xl bg-accent/10 text-accent">
+                            <Building2 className="h-6 w-6" />
                         </div>
+                        <ArrowRight className="h-5 w-5 text-text-muted group-hover:translate-x-1 group-hover:text-accent transition-all" />
                     </div>
-                </div>
+                    <h3 className="text-xl font-bold text-text-primary mb-1">Entidades</h3>
+                    <p className="text-text-secondary text-sm">Gestiona PyMES, Comercios y Profesionales registrados.</p>
+                </Link>
+
+                <Link href="/dashboard/contactos" className="glass-card p-6 group hover:border-accent/40 transition-all">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 rounded-xl bg-accent/10 text-accent">
+                            <Users className="h-6 w-6" />
+                        </div>
+                        <ArrowRight className="h-5 w-5 text-text-muted group-hover:translate-x-1 group-hover:text-accent transition-all" />
+                    </div>
+                    <h3 className="text-xl font-bold text-text-primary mb-1">Contactos</h3>
+                    <p className="text-text-secondary text-sm">Administra la base de datos de personas y roles.</p>
+                </Link>
+
+                <Link href="/dashboard/categorias" className="glass-card p-6 group hover:border-accent/40 transition-all">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 rounded-xl bg-accent/10 text-accent">
+                            <FolderTree className="h-6 w-6" />
+                        </div>
+                        <ArrowRight className="h-5 w-5 text-text-muted group-hover:translate-x-1 group-hover:text-accent transition-all" />
+                    </div>
+                    <h3 className="text-xl font-bold text-text-primary mb-1">Categorías</h3>
+                    <p className="text-text-secondary text-sm">Organiza tus registros por jerarquías y clusters.</p>
+                </Link>
+            </div>
+
+            {/* Quick Actions Footer */}
+            <div className="flex flex-wrap gap-4 pt-4 border-t border-border/40">
+                <Link href="/dashboard/entidades/nueva" className="btn-primary flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    Nueva Entidad
+                </Link>
+                <Link href="/dashboard/estadisticas" className="btn-secondary">
+                    Ver Estadísticas Completas
+                </Link>
+                <Link href="/dashboard/auditoria" className="btn-secondary">
+                    Historial de Actividad
+                </Link>
             </div>
         </div>
     )
