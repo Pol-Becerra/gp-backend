@@ -25,18 +25,24 @@ import { formatDate, truncate, getTipoEntidadLabel } from '@/lib/utils'
 import { EntidadesFilter } from './entidades-filter'
 
 interface PageProps {
-    searchParams: {
+    searchParams: Promise<{
         search?: string
         tipo?: string
         categoria?: string
-    }
+        postalCode?: string
+        etiqueta?: string
+    }>
 }
 
-export default async function EntidadesPage({ searchParams }: PageProps) {
+export default async function EntidadesPage(props: PageProps) {
+    const searchParams = await props.searchParams
     const entidades = await getEntidades(
         searchParams.search,
         searchParams.tipo as any,
-        searchParams.categoria
+        searchParams.categoria,
+
+        searchParams.postalCode,
+        searchParams.etiqueta
     )
     const categorias = await getCategorias()
 
@@ -102,9 +108,21 @@ export default async function EntidadesPage({ searchParams }: PageProps) {
                                                     {entidad.nombre_comercial}
                                                 </p>
                                                 {entidad.razon_social && (
-                                                    <p className="text-text-muted text-sm">
+                                                    <p className="text-text-muted text-sm italic">
                                                         {truncate(entidad.razon_social, 30)}
                                                     </p>
+                                                )}
+                                                {entidad.etiquetas && entidad.etiquetas.length > 0 && (
+                                                    <div className="flex flex-wrap gap-1 mt-1.5">
+                                                        {entidad.etiquetas.map((tag: string) => (
+                                                            <span
+                                                                key={tag}
+                                                                className="text-[9px] px-1.5 py-0.5 rounded-md bg-accent/5 text-accent/80 border border-accent/10 font-bold uppercase tracking-wider"
+                                                            >
+                                                                {tag}
+                                                            </span>
+                                                        ))}
+                                                    </div>
                                                 )}
                                             </div>
                                         </TableCell>
@@ -122,15 +140,19 @@ export default async function EntidadesPage({ searchParams }: PageProps) {
                                             </Badge>
                                         </TableCell>
                                         <TableCell>
-                                            {entidad.categoria ? (
-                                                <div className="flex items-center gap-2">
-                                                    <div
-                                                        className="w-3 h-3 rounded-full"
-                                                        style={{ backgroundColor: entidad.categoria.color }}
-                                                    />
-                                                    <span className="text-text-secondary">
-                                                        {entidad.categoria.nombre}
-                                                    </span>
+                                            {entidad.categorias && entidad.categorias.length > 0 ? (
+                                                <div className="flex flex-wrap gap-1">
+                                                    {entidad.categorias.map((cat: any) => (
+                                                        <div key={cat.id} className="flex items-center gap-1.5 bg-accent/5 px-2 py-0.5 rounded-full border border-accent/10">
+                                                            <div
+                                                                className="w-2 h-2 rounded-full"
+                                                                style={{ backgroundColor: cat.color }}
+                                                            />
+                                                            <span className="text-[11px] text-text-secondary whitespace-nowrap">
+                                                                {cat.nombre}
+                                                            </span>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             ) : (
                                                 <span className="text-text-muted">Sin categoría</span>

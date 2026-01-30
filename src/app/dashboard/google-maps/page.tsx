@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getGoogleMapsData } from '@/app/actions/google-maps'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import {
     Table,
@@ -13,18 +14,22 @@ import {
 import { Input } from '@/components/ui/input'
 import { Plus, Map, Eye, Pencil, Star, Phone, Globe, Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatDate, truncate } from '@/lib/utils'
+import { PassToEntidadesButton } from '@/components/google-maps/pass-button'
 
 interface PageProps {
-    searchParams: {
+    searchParams: Promise<{
         title?: string
         rubro?: string
         website?: string
         phone?: string
+        postalCode?: string
+        etiqueta?: string
         page?: string
-    }
+    }>
 }
 
-export default async function GoogleMapsPage({ searchParams }: PageProps) {
+export default async function GoogleMapsPage(props: PageProps) {
+    const searchParams = await props.searchParams
     const currentPage = Number(searchParams.page) || 1
     const limit = 10
 
@@ -33,6 +38,8 @@ export default async function GoogleMapsPage({ searchParams }: PageProps) {
         rubro: searchParams.rubro,
         website: searchParams.website,
         phone: searchParams.phone,
+        postalCode: searchParams.postalCode,
+        etiqueta: searchParams.etiqueta,
         page: currentPage,
         limit
     })
@@ -48,6 +55,8 @@ export default async function GoogleMapsPage({ searchParams }: PageProps) {
         if (searchParams.rubro) newParams.set('rubro', searchParams.rubro)
         if (searchParams.website) newParams.set('website', searchParams.website)
         if (searchParams.phone) newParams.set('phone', searchParams.phone)
+        if (searchParams.postalCode) newParams.set('postalCode', searchParams.postalCode)
+        if (searchParams.etiqueta) newParams.set('etiqueta', searchParams.etiqueta)
 
         // Update with new params
         Object.entries(params).forEach(([key, value]) => {
@@ -82,7 +91,7 @@ export default async function GoogleMapsPage({ searchParams }: PageProps) {
             {/* Filters */}
             <Card>
                 <CardContent className="p-4">
-                    <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
                         <div className="space-y-1">
                             <label className="text-xs font-medium text-text-muted ml-1">Título</label>
                             <Input
@@ -97,6 +106,22 @@ export default async function GoogleMapsPage({ searchParams }: PageProps) {
                                 name="rubro"
                                 placeholder="Rubro buscado..."
                                 defaultValue={searchParams.rubro}
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium text-text-muted ml-1">CP (Cobertura)</label>
+                            <Input
+                                name="postalCode"
+                                placeholder="Código Postal..."
+                                defaultValue={searchParams.postalCode}
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium text-text-muted ml-1">Etiqueta</label>
+                            <Input
+                                name="etiqueta"
+                                placeholder="Tag..."
+                                defaultValue={searchParams.etiqueta}
                             />
                         </div>
                         <div className="space-y-1">
@@ -168,9 +193,21 @@ export default async function GoogleMapsPage({ searchParams }: PageProps) {
                                                         {entry.title}
                                                     </p>
                                                     {entry.plus_code && (
-                                                        <p className="text-text-muted text-sm font-mono">
+                                                        <p className="text-text-muted text-xs font-mono">
                                                             {entry.plus_code}
                                                         </p>
+                                                    )}
+                                                    {entry.etiquetas && entry.etiquetas.length > 0 && (
+                                                        <div className="flex flex-wrap gap-1 mt-1.5">
+                                                            {entry.etiquetas.map((tag: string) => (
+                                                                <span
+                                                                    key={tag}
+                                                                    className="text-[9px] px-1.5 py-0.5 rounded-md bg-accent/5 text-accent/80 border border-accent/10 font-bold uppercase tracking-wider"
+                                                                >
+                                                                    {tag}
+                                                                </span>
+                                                            ))}
+                                                        </div>
                                                     )}
                                                 </div>
                                             </TableCell>
@@ -187,6 +224,15 @@ export default async function GoogleMapsPage({ searchParams }: PageProps) {
                                                 <p className="text-text-muted text-xs">
                                                     {entry.street ? truncate(entry.street, 20) : 'N/A'}
                                                 </p>
+                                                {entry.postal_codes && entry.postal_codes.length > 0 && (
+                                                    <div className="flex flex-wrap gap-1 mt-1">
+                                                        {entry.postal_codes.map((cp: string) => (
+                                                            <Badge key={cp} variant="secondary" className="text-[9px] px-1 py-0 leading-none h-4">
+                                                                {cp}
+                                                            </Badge>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </TableCell>
                                             <TableCell>
                                                 {entry.total_score ? (
@@ -216,6 +262,10 @@ export default async function GoogleMapsPage({ searchParams }: PageProps) {
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
+                                                    <PassToEntidadesButton
+                                                        id={entry.id}
+                                                        isPassed={entry.etiquetas?.includes('Pasado') || false}
+                                                    />
                                                     <Link href={`/dashboard/google-maps/${entry.id}`}>
                                                         <Button variant="ghost" size="icon">
                                                             <Pencil className="h-4 w-4" />
