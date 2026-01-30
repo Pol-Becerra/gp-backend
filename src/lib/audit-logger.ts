@@ -24,6 +24,7 @@ export type AuditAction =
     | 'DELETE_TAREA_AREA'
     | 'LOGIN'
     | 'LOGOUT'
+    | 'CONVERT_GMAPS_TO_ENTIDAD'
 
 interface LogActionParams {
     action: AuditAction
@@ -32,8 +33,8 @@ interface LogActionParams {
 }
 
 export async function logAction({ action, entityName, details }: LogActionParams) {
-    const supabase = createClient()
-    const headersList = headers()
+    const supabase = await createClient()
+    const headersList = await headers()
 
     const { data: { user } } = await supabase.auth.getUser()
 

@@ -11,6 +11,7 @@ import {
     ClipboardList,
     Settings,
     LogOut,
+    BarChart3,
     ChevronLeft,
     Menu,
     Map,
@@ -25,6 +26,11 @@ const navigation = [
         name: 'Dashboard',
         href: '/dashboard',
         icon: LayoutDashboard,
+    },
+    {
+        name: 'Estadísticas',
+        href: '/dashboard/estadisticas',
+        icon: BarChart3,
     },
     {
         name: 'Entidades',
@@ -52,7 +58,7 @@ const navigation = [
         icon: ClipboardList,
     },
     {
-        name: 'Auditoría',
+        name: 'Auditorías',
         href: '/dashboard/auditoria',
         icon: ClipboardList,
     },

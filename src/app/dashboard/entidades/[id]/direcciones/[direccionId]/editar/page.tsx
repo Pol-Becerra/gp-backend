@@ -4,13 +4,14 @@ import { getEntidadById } from '@/app/actions/entidades'
 import { notFound } from 'next/navigation'
 
 interface PageProps {
-    params: {
+    params: Promise<{
         id: string
         direccionId: string
-    }
+    }>
 }
 
-export default async function EditDireccionPage({ params }: PageProps) {
+export default async function EditDireccionPage(props: PageProps) {
+    const params = await props.params
     const entidad = await getEntidadById(params.id)
     const direccion = await getDireccion(params.id, params.direccionId)
 

@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 import type { ContactoFormData } from '@/lib/types'
 
 export async function getContactos(search?: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     let query = supabase
         .from('contactos')
@@ -34,7 +34,7 @@ export async function getContactos(search?: string) {
 }
 
 export async function getContactosByEntidad(entidadId: string, search?: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     let query = supabase
         .from('contactos')
@@ -58,7 +58,7 @@ export async function getContactosByEntidad(entidadId: string, search?: string) 
 }
 
 export async function getContactoById(id: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('contactos')
@@ -81,7 +81,7 @@ export async function getContactoById(id: string) {
 }
 
 export async function createContacto(formData: ContactoFormData) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('contactos')
@@ -118,7 +118,7 @@ export async function createContacto(formData: ContactoFormData) {
 }
 
 export async function updateContacto(id: string, formData: ContactoFormData) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('contactos')
@@ -155,7 +155,7 @@ export async function updateContacto(id: string, formData: ContactoFormData) {
 }
 
 export async function deleteContacto(id: string, nombre: string, entidadId: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { error } = await supabase
         .from('contactos')

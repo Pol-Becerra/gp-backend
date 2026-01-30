@@ -18,11 +18,10 @@ import { DeleteContactButton } from '@/components/dashboard/delete-contact-butto
 import { Plus } from 'lucide-react'
 import { Search } from '@/components/dashboard/search'
 
-export default async function ContactosPage({
-    searchParams,
-}: {
-    searchParams: { search?: string }
+export default async function ContactosPage(props: {
+    searchParams: Promise<{ search?: string }>
 }) {
+    const searchParams = await props.searchParams
     const contactos = await getContactos(searchParams.search)
 
     return (

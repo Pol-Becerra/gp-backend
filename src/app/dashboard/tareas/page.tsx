@@ -27,14 +27,15 @@ import Link from 'next/link'
 import { TaskFilters } from '@/components/tasks/task-filters'
 
 interface PageProps {
-    searchParams: {
+    searchParams: Promise<{
         area?: string
         estado?: string
         prioridad?: string
-    }
+    }>
 }
 
-export default async function TareasPage({ searchParams }: PageProps) {
+export default async function TareasPage(props: PageProps) {
+    const searchParams = await props.searchParams
     const [areas, tareas] = await Promise.all([
         getTareaAreas(),
         getTareas({

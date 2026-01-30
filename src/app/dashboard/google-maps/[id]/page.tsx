@@ -4,12 +4,13 @@ import { notFound } from 'next/navigation'
 import { Map } from 'lucide-react'
 
 interface PageProps {
-    params: {
+    params: Promise<{
         id: string
-    }
+    }>
 }
 
-export default async function GoogleMapsEntryPage({ params }: PageProps) {
+export default async function GoogleMapsEntryPage(props: PageProps) {
+    const params = await props.params
     const entry = await getGoogleMapsEntryById(params.id)
 
     if (!entry) {

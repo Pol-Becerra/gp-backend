@@ -4,8 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
 
 export async function resetPassword(email: string) {
-    const supabase = createClient()
-    const headersList = headers()
+    const supabase = await createClient()
+    const headersList = await headers()
     const origin = headersList.get('origin') || headersList.get('host')
     const protocol = headersList.get('x-forwarded-proto') || 'http'
 

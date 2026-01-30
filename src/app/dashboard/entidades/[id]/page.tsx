@@ -36,40 +36,23 @@ import { DeleteContactButton } from '@/components/dashboard/delete-contact-butto
 import { DeleteDireccionButton } from '@/components/dashboard/delete-direccion-button'
 
 interface PageProps {
-    params: { id: string }
-    searchParams: { search?: string }
+    params: Promise<{ id: string }>
+    searchParams: Promise<{ search?: string }>
 }
 
-export default async function EntidadDetailPage({ params, searchParams }: PageProps) {
+export default async function EntidadDetailPage(props: PageProps) {
+    const params = await props.params
+    const searchParams = await props.searchParams
+
     const entidad = await getEntidadById(params.id)
 
-    // Si hay parámetros de búsqueda, filtramos, sino usamos los contactos ya cargados en la entidad
-    // O mejor, siempre llamamos a getContactosByEntidad si hay search, para filtrar en servidor.
-    // La entidad ya viene con contactos, pero getEntidadById NO filtra.
-    // Para simplificar y ser consistente, podemos usar getContactosByEntidad separado para la lista
-    // O filtrar en cliente. El plan decía "Update getContactos...".
-    // Vamos a buscar los contactos filtrados si hay search.
-
-    const contactosFiltrados = searchParams.search
-        ? await getContactosByEntidad(params.id, searchParams.search)
-        : await getContactosByEntidad(params.id) // O usar entidad.contactos si estamos seguros que son todos.
-    // entidad.contactos viene de getEntidadById.
-    // Para consistencia con el search, usemos getContactosByEntidad siempre para la lista de contactos,
-    // o usemos entidad.contactos si no hay search.
-
-    // REVISIÓN: getEntidadById trae contactos. getContactosByEntidad trae contactos ordenados y con más lógica quizas.
-    // Vamos a usar getContactosByEntidad para la lista renderizada, ignorando los de entidad si queremos filtering.
-    // Pero espera, la UI actual usa `entidad.contactos`.
-    // Voy a sobreescribir entidad.contactos o pasar una lista separada.
-
-    // Mejor estrategia:
     if (!entidad) {
         notFound()
     }
 
     const contactos = searchParams.search
         ? await getContactosByEntidad(params.id, searchParams.search)
-        : entidad.contactos // Usamos los que ya vinieron si no hay search, para ahorrar request
+        : entidad.contactos
 
 
     return (
@@ -364,18 +347,36 @@ export default async function EntidadDetailPage({ params, searchParams }: PagePr
                                     <p className="font-medium">{entidad.cuit}</p>
                                 </div>
                             )}
-                            {entidad.categoria && (
+                            {entidad.categorias && entidad.categorias.length > 0 && (
                                 <div>
-                                    <p className="text-text-muted text-sm">Categoría</p>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <div
-                                            className="w-3 h-3 rounded-full"
-                                            style={{ backgroundColor: entidad.categoria.color }}
-                                        />
-                                        <span className="font-medium">{entidad.categoria.nombre}</span>
+                                    <p className="text-text-muted text-sm mb-2">Categorías</p>
+                                    <div className="space-y-2">
+                                        {entidad.categorias.map((cat: any) => (
+                                            <div key={cat.id} className="flex items-center gap-2">
+                                                <div
+                                                    className="w-3 h-3 rounded-full"
+                                                    style={{ backgroundColor: cat.color }}
+                                                />
+                                                <span className="font-medium text-sm">{cat.nombre}</span>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             )}
+
+                            {entidad.codigos_postales && entidad.codigos_postales.length > 0 && (
+                                <div>
+                                    <p className="text-text-muted text-sm mb-2">Cobertura</p>
+                                    <div className="flex flex-wrap gap-1">
+                                        {entidad.codigos_postales.map((cp: string) => (
+                                            <Badge key={cp} variant="outline" className="text-[10px] font-mono leading-none py-1">
+                                                {cp}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             <div>
                                 <p className="text-text-muted text-sm">Creado</p>
                                 <p className="font-medium flex items-center gap-2">
@@ -405,6 +406,6 @@ export default async function EntidadDetailPage({ params, searchParams }: PagePr
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     )
 }

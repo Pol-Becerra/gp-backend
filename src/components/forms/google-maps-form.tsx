@@ -8,7 +8,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Loader2, MapPin, Globe, Phone, Info, Link as LinkIcon, Star } from 'lucide-react'
+import { Loader2, MapPin, Globe, Phone, Info, Link as LinkIcon, Star, Tag } from 'lucide-react'
+import { TagInput } from '@/components/ui/tag-input'
 import { createGoogleMapsEntry, updateGoogleMapsEntry } from '@/app/actions/google-maps'
 import type { GoogleMapsData, GoogleMapsFormData } from '@/lib/types'
 
@@ -26,6 +27,7 @@ export function GoogleMapsForm({ entry, mode }: GoogleMapsFormProps) {
         register,
         handleSubmit,
         watch,
+        setValue,
         formState: { errors },
     } = useForm<GoogleMapsFormData>({
         defaultValues: entry
@@ -38,14 +40,14 @@ export function GoogleMapsForm({ entry, mode }: GoogleMapsFormProps) {
                 address: entry.address || '',
                 street: entry.street || '',
                 city: entry.city || '',
-                postal_code: entry.postal_code || '',
+                postal_codes: entry.postal_codes || [],
                 state: entry.state || '',
                 country_code: entry.country_code || 'AR',
                 latitude: entry.latitude || undefined,
                 longitude: entry.longitude || undefined,
                 plus_code: entry.plus_code || '',
                 category_name: entry.category_name || '',
-                categories: entry.categories || '',
+                categories: entry.categories || [],
                 total_score: entry.total_score || undefined,
                 reviews_count: entry.reviews_count || undefined,
                 opening_hours: entry.opening_hours || '',
@@ -59,12 +61,15 @@ export function GoogleMapsForm({ entry, mode }: GoogleMapsFormProps) {
                 reservation_link: entry.reservation_link || '',
                 order_link: entry.order_link || '',
                 google_maps_url: entry.google_maps_url || '',
+                etiquetas: entry.etiquetas || [],
             }
             : {
                 country_code: 'AR',
                 images: [],
                 attributes: [],
                 service_options: [],
+                categories: [],
+                etiquetas: [],
             },
     })
 
@@ -135,6 +140,13 @@ export function GoogleMapsForm({ entry, mode }: GoogleMapsFormProps) {
                                         placeholder="Ej: Tienda de herramientas"
                                     />
                                 </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Categorías Adicionales (JSON)</Label>
+                                <TagInput
+                                    value={watch('categories') || []}
+                                    onChange={(tags) => setValue('categories', tags, { shouldDirty: true })}
+                                />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="description">Descripción</Label>
@@ -263,11 +275,10 @@ export function GoogleMapsForm({ entry, mode }: GoogleMapsFormProps) {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="postal_code">Código Postal</Label>
-                                    <Input
-                                        id="postal_code"
-                                        {...register('postal_code')}
-                                        placeholder="1234"
+                                    <Label>Códigos Postales / Áreas</Label>
+                                    <TagInput
+                                        value={watch('postal_codes') || []}
+                                        onChange={(tags) => setValue('postal_codes', tags, { shouldDirty: true })}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -360,6 +371,22 @@ export function GoogleMapsForm({ entry, mode }: GoogleMapsFormProps) {
                     </Card>
                 </div>
             </div>
+
+            {/* Etiquetas */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Tag className="h-5 w-5 text-accent" />
+                        Etiquetas de Seguimiento
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <TagInput
+                        value={watch('etiquetas') || []}
+                        onChange={(tags) => setValue('etiquetas', tags, { shouldDirty: true })}
+                    />
+                </CardContent>
+            </Card>
 
             {/* Actions */}
             <div className="flex justify-end gap-4">

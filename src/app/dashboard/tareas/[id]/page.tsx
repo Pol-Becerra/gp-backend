@@ -4,12 +4,13 @@ import { ClipboardList } from 'lucide-react'
 import { notFound } from 'next/navigation'
 
 interface PageProps {
-    params: {
+    params: Promise<{
         id: string
-    }
+    }>
 }
 
-export default async function TareaDetallePage({ params }: PageProps) {
+export default async function TareaDetallePage(props: PageProps) {
+    const params = await props.params
     const [tarea, areas, tasks, users] = await Promise.all([
         getTareaById(params.id),
         getTareaAreas(),

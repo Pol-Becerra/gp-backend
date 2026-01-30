@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import type { Provincia, Partido, Localidad } from '@/lib/types'
 
 export async function getProvincias(): Promise<Provincia[]> {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('provincias')
         .select('*')
@@ -19,7 +19,7 @@ export async function getProvincias(): Promise<Provincia[]> {
 }
 
 export async function getPartidos(provinciaId: string): Promise<Partido[]> {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('partidos')
         .select('*')
@@ -35,7 +35,7 @@ export async function getPartidos(provinciaId: string): Promise<Partido[]> {
 }
 
 export async function getLocalidades(partidoId: string): Promise<Localidad[]> {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('localidades')
         .select('*')
@@ -52,7 +52,7 @@ export async function getLocalidades(partidoId: string): Promise<Localidad[]> {
 
 // AMB PROVINCIAS
 export async function createProvincia(nombre: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('provincias')
         .insert({ nombre })
@@ -64,7 +64,7 @@ export async function createProvincia(nombre: string) {
 }
 
 export async function updateProvincia(id: string, nombre: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('provincias')
         .update({ nombre })
@@ -77,7 +77,7 @@ export async function updateProvincia(id: string, nombre: string) {
 }
 
 export async function deleteProvincia(id: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { error } = await supabase
         .from('provincias')
         .delete()
@@ -89,7 +89,7 @@ export async function deleteProvincia(id: string) {
 
 // AMB PARTIDOS
 export async function createPartido(nombre: string, provinciaId: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('partidos')
         .insert({ nombre, provincia_id: provinciaId })
@@ -101,7 +101,7 @@ export async function createPartido(nombre: string, provinciaId: string) {
 }
 
 export async function updatePartido(id: string, nombre: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('partidos')
         .update({ nombre })
@@ -114,7 +114,7 @@ export async function updatePartido(id: string, nombre: string) {
 }
 
 export async function deletePartido(id: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { error } = await supabase
         .from('partidos')
         .delete()
@@ -126,7 +126,7 @@ export async function deletePartido(id: string) {
 
 // AMB LOCALIDADES
 export async function createLocalidad(nombre: string, partidoId: string, cp: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('localidades')
         .insert({ nombre, partido_id: partidoId, cp })
@@ -138,7 +138,7 @@ export async function createLocalidad(nombre: string, partidoId: string, cp: str
 }
 
 export async function updateLocalidad(id: string, nombre: string, cp: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('localidades')
         .update({ nombre, cp })
@@ -151,7 +151,7 @@ export async function updateLocalidad(id: string, nombre: string, cp: string) {
 }
 
 export async function deleteLocalidad(id: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { error } = await supabase
         .from('localidades')
         .delete()

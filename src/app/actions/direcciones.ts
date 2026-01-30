@@ -7,7 +7,7 @@ import type { Direccion } from '@/lib/types'
 import { randomUUID } from 'crypto'
 
 export async function addDireccion(entidadId: string, direccionData: Omit<Direccion, 'id'>) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // 1. Obtener entidad actual
     const { data: entidad, error: fetchError } = await supabase
@@ -56,7 +56,7 @@ export async function addDireccion(entidadId: string, direccionData: Omit<Direcc
 }
 
 export async function updateDireccion(entidadId: string, direccion: Direccion) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // 1. Obtener entidad actual
     const { data: entidad, error: fetchError } = await supabase
@@ -106,7 +106,7 @@ export async function updateDireccion(entidadId: string, direccion: Direccion) {
 }
 
 export async function deleteDireccion(entidadId: string, direccionId: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // 1. Obtener entidad actual
     const { data: entidad, error: fetchError } = await supabase
@@ -150,7 +150,7 @@ export async function deleteDireccion(entidadId: string, direccionId: string) {
 }
 
 export async function getDireccion(entidadId: string, direccionId: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data: entidad, error } = await supabase
         .from('entidades')

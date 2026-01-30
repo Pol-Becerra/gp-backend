@@ -3,13 +3,14 @@ import { ContactoForm } from '@/components/forms/contacto-form'
 import { notFound } from 'next/navigation'
 
 interface EditContactoPageProps {
-    params: {
+    params: Promise<{
         id: string
         contactoId: string
-    }
+    }>
 }
 
-export default async function EditContactoPage({ params }: EditContactoPageProps) {
+export default async function EditContactoPage(props: EditContactoPageProps) {
+    const params = await props.params
     const contacto = await getContactoById(params.contactoId)
 
     if (!contacto) {

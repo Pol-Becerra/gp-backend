@@ -3,10 +3,11 @@ import { getEntidadById } from '@/app/actions/entidades'
 import { EntidadForm } from '@/components/forms/entidad-form'
 
 interface PageProps {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
 
-export default async function EditarEntidadPage({ params }: PageProps) {
+export default async function EditarEntidadPage(props: PageProps) {
+    const params = await props.params
     const entidad = await getEntidadById(params.id)
 
     if (!entidad) {

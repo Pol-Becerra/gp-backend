@@ -3,10 +3,11 @@ import { getEntidadById } from '@/app/actions/entidades'
 import { notFound } from 'next/navigation'
 
 interface PageProps {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
 
-export default async function NuevoContactoPage({ params }: PageProps) {
+export default async function NuevoContactoPage(props: PageProps) {
+    const params = await props.params
     const entidad = await getEntidadById(params.id)
 
     if (!entidad) {

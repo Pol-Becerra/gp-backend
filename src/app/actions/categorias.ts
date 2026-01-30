@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 import type { CategoriaFormData } from '@/lib/types'
 
 export async function getCategorias() {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('categorias')
@@ -22,7 +22,7 @@ export async function getCategorias() {
 }
 
 export async function getCategoriasTree() {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('categorias')
@@ -54,7 +54,7 @@ export async function getCategoriasTree() {
 }
 
 export async function getCategoriaById(id: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('categorias')
@@ -71,7 +71,7 @@ export async function getCategoriaById(id: string) {
 }
 
 export async function createCategoria(formData: CategoriaFormData) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -110,7 +110,7 @@ export async function createCategoria(formData: CategoriaFormData) {
 }
 
 export async function updateCategoria(id: string, formData: CategoriaFormData) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data, error } = await supabase
         .from('categorias')
@@ -144,7 +144,7 @@ export async function updateCategoria(id: string, formData: CategoriaFormData) {
 }
 
 export async function deleteCategoria(id: string, nombre: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { error } = await supabase
         .from('categorias')

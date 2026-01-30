@@ -41,7 +41,7 @@ const actionColors: Record<string, 'success' | 'warning' | 'error' | 'info'> = {
 }
 
 export default async function AuditoriaPage() {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data: logs } = await supabase
         .from('auditoria_logs')
@@ -53,7 +53,7 @@ export default async function AuditoriaPage() {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-bold text-text-primary">Auditoría</h1>
+                <h1 className="text-3xl font-bold text-text-primary">Auditorías</h1>
                 <p className="text-text-secondary mt-1">
                     Registro de todas las acciones realizadas en el sistema
                 </p>

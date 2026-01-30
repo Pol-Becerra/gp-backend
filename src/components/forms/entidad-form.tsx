@@ -31,7 +31,9 @@ import {
     Globe,
     MapPin,
     Wrench,
+    Tag,
 } from 'lucide-react'
+import { TagInput } from '@/components/ui/tag-input'
 
 interface EntidadFormProps {
     entidad?: Entidad
@@ -44,10 +46,12 @@ interface FormData {
     razon_social?: string
     cuit?: string
     descripcion?: string
-    categoria_id?: string
+    categorias: Partial<Categoria>[]
     redes_sociales: RedesSociales
     activo: boolean
     notas?: string
+    codigos_postales: string[]
+    etiquetas: string[]
 }
 
 const tipoOptions: { value: TipoEntidad; label: string; icon: React.ReactNode }[] = [
@@ -88,16 +92,21 @@ export function EntidadForm({ entidad, mode }: EntidadFormProps) {
                 razon_social: entidad.razon_social || '',
                 cuit: entidad.cuit || '',
                 descripcion: entidad.descripcion || '',
-                categoria_id: entidad.categoria_id || '',
+                categorias: entidad.categorias || [],
                 redes_sociales: entidad.redes_sociales || {},
                 activo: entidad.activo,
                 notas: entidad.notas || '',
+                codigos_postales: entidad.codigos_postales || [],
+                etiquetas: entidad.etiquetas || [],
             }
             : {
                 tipo: 'PYME',
                 nombre_comercial: '',
+                categorias: [],
                 redes_sociales: {},
                 activo: true,
+                codigos_postales: [],
+                etiquetas: [],
             },
     })
 
@@ -259,27 +268,61 @@ export function EntidadForm({ entidad, mode }: EntidadFormProps) {
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="categoria_id">Categoría</Label>
+                        <div className="space-y-4">
+                            <Label>Categorías</Label>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                {watch('categorias')?.map((cat) => (
+                                    <Badge
+                                        key={cat.id}
+                                        variant="secondary"
+                                        className="flex items-center gap-1 pl-2 pr-1 py-1"
+                                        style={{ borderLeft: `4px solid ${cat.color}` }}
+                                    >
+                                        {cat.nombre}
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const current = watch('categorias') || []
+                                                setValue('categorias', current.filter(c => c.id !== cat.id), { shouldDirty: true })
+                                            }}
+                                            className="hover:bg-accent/20 rounded-full p-0.5"
+                                        >
+                                            <X className="h-3 w-3" />
+                                        </button>
+                                    </Badge>
+                                ))}
+                                {(!watch('categorias') || watch('categorias').length === 0) && (
+                                    <p className="text-sm text-text-secondary italic">Sin categorías seleccionadas</p>
+                                )}
+                            </div>
                             <Select
-                                value={watch('categoria_id') || ''}
-                                onValueChange={(value) => setValue('categoria_id', value)}
+                                onValueChange={(id) => {
+                                    const cat = categorias.find(c => c.id === id)
+                                    if (cat) {
+                                        const current = watch('categorias') || []
+                                        if (!current.find(c => c.id === id)) {
+                                            setValue('categorias', [...current, { id: cat.id, nombre: cat.nombre, color: cat.color }], { shouldDirty: true })
+                                        }
+                                    }
+                                }}
                             >
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Seleccionar categoría" />
+                                    <SelectValue placeholder="Agregar categoría..." />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {categorias.map((cat) => (
-                                        <SelectItem key={cat.id} value={cat.id}>
-                                            <div className="flex items-center gap-2">
-                                                <div
-                                                    className="w-3 h-3 rounded-full"
-                                                    style={{ backgroundColor: cat.color }}
-                                                />
-                                                {cat.nombre}
-                                            </div>
-                                        </SelectItem>
-                                    ))}
+                                    {categorias
+                                        .filter(cat => !watch('categorias')?.some(c => c.id === cat.id))
+                                        .map((cat) => (
+                                            <SelectItem key={cat.id} value={cat.id}>
+                                                <div className="flex items-center gap-2">
+                                                    <div
+                                                        className="w-3 h-3 rounded-full"
+                                                        style={{ backgroundColor: cat.color }}
+                                                    />
+                                                    {cat.nombre}
+                                                </div>
+                                            </SelectItem>
+                                        ))}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -571,6 +614,39 @@ export function EntidadForm({ entidad, mode }: EntidadFormProps) {
                         <Plus className="h-4 w-4 mr-2" />
                         Agregar Dirección
                     </Button>
+                </CardContent>
+            </Card>
+
+            {/* Etiquetas */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Tag className="h-5 w-5 text-accent" />
+                        Etiquetas de Estado
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <TagInput
+                        value={watch('etiquetas')}
+                        onChange={(tags) => setValue('etiquetas', tags, { shouldDirty: true })}
+                    />
+                </CardContent>
+            </Card>
+
+            {/* Áreas de Cobertura */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-accent" />
+                        Áreas de Cobertura (CP)
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <TagInput
+                        value={watch('codigos_postales') || []}
+                        onChange={(tags) => setValue('codigos_postales', tags, { shouldDirty: true })}
+                        placeholder="Ej: 1425, B7600..."
+                    />
                 </CardContent>
             </Card>
 

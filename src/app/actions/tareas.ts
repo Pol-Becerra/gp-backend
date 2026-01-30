@@ -8,7 +8,7 @@ import type { Tarea, TareaArea, TareaFormData, TareaAreaFormData } from '@/lib/t
 // --- AREAS ---
 
 export async function getTareaAreas() {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('tareas_areas')
         .select('*')
@@ -23,7 +23,7 @@ export async function getTareaAreas() {
 }
 
 export async function createTareaArea(formData: TareaAreaFormData) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { error: 'No autorizado' }
@@ -53,7 +53,7 @@ export async function createTareaArea(formData: TareaAreaFormData) {
 }
 
 export async function deleteTareaArea(id: string, nombre: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { error } = await supabase.from('tareas_areas').delete().eq('id', id)
 
     if (error) {
@@ -74,7 +74,7 @@ export async function deleteTareaArea(id: string, nombre: string) {
 // --- TAREAS ---
 
 export async function getTareas(filters?: { area_id?: string; estado?: string; prioridad?: string }) {
-    const supabase = createClient()
+    const supabase = await createClient()
     let query = supabase
         .from('tareas')
         .select('*, area:tareas_areas(*)')
@@ -95,7 +95,7 @@ export async function getTareas(filters?: { area_id?: string; estado?: string; p
 }
 
 export async function createTarea(formData: TareaFormData) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return { error: 'No autorizado' }
@@ -132,7 +132,7 @@ export async function createTarea(formData: TareaFormData) {
 }
 
 export async function updateTarea(id: string, formData: Partial<TareaFormData>) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Clean data: convert empty strings to null
     const finalData = {
@@ -166,7 +166,7 @@ export async function updateTarea(id: string, formData: Partial<TareaFormData>) 
 }
 
 export async function deleteTarea(id: string, titulo: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { error } = await supabase.from('tareas').delete().eq('id', id)
 
     if (error) {
@@ -185,7 +185,7 @@ export async function deleteTarea(id: string, titulo: string) {
 }
 
 export async function getTareaById(id: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('tareas')
         .select('*, area:tareas_areas(*)')
@@ -201,7 +201,7 @@ export async function getTareaById(id: string) {
 }
 
 export async function getUsers() {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase
         .from('perfiles')
         .select('id, email, nombre')
