@@ -1,16 +1,68 @@
 export type TipoEntidad = 'PYME' | 'NEGOCIO' | 'PROFESIONAL' | 'SERVICIO'
 export type RolContacto = 'Administrativo' | 'Dueño' | 'Contador' | 'Ventas' | 'Otro'
 
+// direcciones table is now independent but linked to sucursales. 
+// We keep this interface for UI consistency but it maps to the 'direcciones' table.
 export interface Direccion {
     id: string
-    tipo: 'fiscal' | 'comercial' | 'obra' | 'local' | 'principal' | 'estudio'
+    sucursal_id?: string // new
     calle: string
-    numero: string
+    numero?: string // Deprecated in new model? Or kept in 'calle'? New model has 'calle' as text.
     piso?: string
     oficina?: string
-    ciudad: string
-    provincia: string
+    localidad_id?: string
     cp: string
+    lat?: number
+    lng?: number
+    // UI Helpers
+    provincia?: string
+    ciudad?: string
+}
+
+export interface Sucursal {
+    id: string
+    entidad_id: string
+    nombre: string | null
+    es_principal: boolean
+    created_at: string
+    direcciones?: Direccion[]
+    // Relaciones
+    entidades?: Entidad
+}
+
+export interface EntidadCobertura {
+    id: string
+    entidad_id: string
+    cp: string
+    localidad_id?: string
+    created_at: string
+}
+
+export interface EntidadEmail {
+    id: string
+    entidad_id: string
+    email: string
+    tipo: string
+}
+
+export interface EntidadTelefono {
+    id: string
+    entidad_id: string
+    telefono: string
+    whatsapp: boolean
+    tipo: string
+}
+
+export interface RedSocial {
+    id: string
+    nombre: string
+}
+
+export interface EntidadRed {
+    entidad_id: string
+    red_social_id: string
+    url: string
+    red_social?: RedSocial
 }
 
 export interface RedesSociales {
@@ -49,18 +101,27 @@ export interface Entidad {
     razon_social: string | null
     cuit: string | null
     descripcion: string | null
-    categoria_id: string | null
+    // Relational Fields
+    sucursales?: Sucursal[]
+    cobertura?: EntidadCobertura[]
+    emails_rel?: EntidadEmail[]
+    telefonos_rel?: EntidadTelefono[]
+    redes_rel?: EntidadRed[]
+
+    // Legacy / Flat for UI (will be computed or mapped)
+    categorias: Partial<Categoria>[] // now via entidad_categorias
     emails: string[]
     telefonos: string[]
     redes_sociales: RedesSociales
-    direcciones: Direccion[]
+    direcciones: Direccion[] // derived from sucursales
     logo_url: string | null
     activo: boolean
     notas: string | null
+    codigos_postales: string[] // derived from cobertura
+    etiquetas?: string[]
     created_at: string
     updated_at: string
     // Relaciones
-    categoria?: Categoria
     contactos?: Contacto[]
     _count?: {
         contactos: number
@@ -101,13 +162,15 @@ export interface EntidadFormData {
     razon_social?: string
     cuit?: string
     descripcion?: string
-    categoria_id?: string
+    categorias: Partial<Categoria>[]
     emails: string[]
     telefonos: string[]
     redes_sociales: RedesSociales
     direcciones: Direccion[]
     activo: boolean
     notas?: string
+    codigos_postales: string[]
+    etiquetas?: string[]
 }
 
 export interface ContactoFormData {
@@ -170,20 +233,21 @@ export interface GoogleMapsData {
     address: string | null
     street: string | null
     city: string | null
-    postal_code: string | null
+    postal_codes: string[] | null
     state: string | null
     country_code: string
     latitude: number | null
     longitude: number | null
     plus_code: string | null
     category_name: string | null
-    categories: string | null
+    categories: string[] | null
     total_score: number | null
     reviews_count: number | null
     opening_hours: string | null
     open_now: string | null
     price_level: string | null
     description: string | null
+    etiquetas?: string[]
     images: any[] | null
     attributes: any[] | null
     service_options: any[] | null
@@ -202,14 +266,14 @@ export interface GoogleMapsFormData {
     address?: string
     street?: string
     city?: string
-    postal_code?: string
+    postal_codes?: string[]
     state?: string
     country_code?: string
     latitude?: number
     longitude?: number
     plus_code?: string
     category_name?: string
-    categories?: string
+    categories?: string[]
     total_score?: number
     reviews_count?: number
     opening_hours?: string
@@ -223,6 +287,7 @@ export interface GoogleMapsFormData {
     reservation_link?: string
     order_link?: string
     google_maps_url?: string
+    etiquetas?: string[]
 }
 // Tasks System
 export type PrioridadTarea = 'Baja' | 'Media' | 'Alta' | 'Crítica'
